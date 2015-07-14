@@ -65,13 +65,19 @@ elif [ "$SELECTEDFILE" != "" ] && [ "$EXTENSION" == "$SELECTEDFILE: image/jpg" ]
 		xdg-open $SELECTEDFILE
 elif [ "$SELECTEDFILE" != "" ] && [ "$EXTENSION" == "$SELECTEDFILE: text/html" ]
 	then
-		firefox $SELECTEDFILE
+		xdg-open $SELECTEDFILE
 elif [ "$SELECTEDFILE" != "" ] && [ "$EXTENSION" == "$SELECTEDFILE: application/pdf" ]
 	then
 		gnome-open $SELECTEDFILE
 elif [ "$SELECTEDFILE" != "" ] && [ "$EXTENSION" == "$SELECTEDFILE: text/html" ]
 	then
 		gnome-www-browser $SELECTEDFILE
+elif [ "$SELECTEDFILE" != "" ] && [ "$EXTENSION" == "$SELECTEDFILE: inode/directory" ]
+	then
+		xdg-open $SELECTEDFILE
+elif [ "$SELECTEDFILE" != "" ] && [ "$EXTENSION" == "$SELECTEDFILE: application/vnd.openxmlformats-officedocument.wordprocessingml.document" ] || [ "$EXTENSION" == "$SELECTEDFILE: application/msword" ] || [ "$EXTENSION" == "$SELECTEDFILE: application/vnd.oasis.opendocument.text" ]
+	then
+		xdg-open $SELECTEDFILE
 fi
 
 rm /home/$USERNAME/tempzen.txt
