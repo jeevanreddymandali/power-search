@@ -75,5 +75,3 @@ elif [ "$SELECTEDFILE" != "" ] && [ "$EXTENSION" == "$SELECTEDFILE: text/html" ]
 fi
 
 rm /home/$USERNAME/tempzen.txt
-
-#/home/jeevan/zenityentry &
