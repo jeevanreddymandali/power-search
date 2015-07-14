@@ -1,22 +1,28 @@
 #!/bin/bash
 
 USERNAME=$(whoami)
+OLDIFS=$IFS 
 
 INPUT=$(zenity --entry)
 
 updatedb --require-visibility 0 -o ~/.locate.db
 
-FILEMATCHES=$(locate --database ~/.locate.db -i -b -c "$INPUT")
+IFS='
+'
+FILEMATCHES=$(locate --database ~/.locate.db -i -b -c $INPUT)
+IFS=$OLDIFS 
 
 if [ $FILEMATCHES == 0 ]; then
-	#echo "no file matches found"
 	zenity --info --text "No matches found" --timeout 2
 	exit 1
 else
 	zenity --info --text "$FILEMATCHES matches found" --timeout 1
 fi
 
+IFS='
+'
 FOUNDFILES=($(locate --database ~/.locate.db -i -b "$INPUT"))
+IFS=$OLDIFS 
 
 x=0
 
@@ -24,23 +30,24 @@ while [ $x -lt $FILEMATCHES ]
 do
 	if [ $x == 0 ]
 		then
-		echo -n "--list --title FILE-SELECTOR --column serialno. --column file --width 1000 --height 600 --radiolist TRUE ${FOUNDFILES[$x]}" >> /home/$USERNAME/tempzen.txt
+		echo -n "--list --title FILE-SELECTOR --column serialno. --column file --width 1000 --height 600 --radiolist TRUE \"${FOUNDFILES[$x]}\"" >> /home/$USERNAME/tempzen.txt
 		x=$((x+1))
 	else
-		echo " FALSE ${FOUNDFILES[$x]}" >> /home/$USERNAME/tempzen.txt
+		echo -n " FALSE \"${FOUNDFILES[$x]}\"" >> /home/$USERNAME/tempzen.txt
 		x=$((x+1))
 	fi
 done
 
-ZEN="$(cat /home/$USERNAME/tempzen.txt)"
-#echo $ZEN
+set -- $(cat /home/$USERNAME/tempzen.txt)
 
-SELECTEDFILE=$(zenity $ZEN)
+SELECTEDFILE=$(eval zenity "$@")
+
 if [ $? -eq 0 ] 
 then
 	zenity --progress --pulsate --timeout 2
 fi
-
+IFS='
+'
 EXTENSION=$(file --mime-type $SELECTEDFILE)
 
 if [ "$SELECTEDFILE" == "" ]
@@ -68,3 +75,5 @@ elif [ "$SELECTEDFILE" != "" ] && [ "$EXTENSION" == "$SELECTEDFILE: text/html" ]
 fi
 
 rm /home/$USERNAME/tempzen.txt
+
+#/home/jeevan/zenityentry &
